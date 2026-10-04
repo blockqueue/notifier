@@ -57,6 +57,17 @@ function assertOptionalAddressListField(value: unknown, field: string): void {
   );
 }
 
+function omitEmptyAddressListFields(
+  options: SendEmailRequest['sendMailOptions'] & Record<string, unknown>,
+): void {
+  if (Array.isArray(options.cc) && options.cc.length === 0) {
+    delete options.cc;
+  }
+  if (Array.isArray(options.bcc) && options.bcc.length === 0) {
+    delete options.bcc;
+  }
+}
+
 export function validateEmailRequestFields(
   body: SendEmailRequest,
   accountConfig?: EmailAccountConfig,
@@ -104,6 +115,8 @@ export function validateEmailRequestFields(
       );
     }
   }
+
+  omitEmptyAddressListFields(options);
 
   assertOptionalStringField(options.from, 'sendMailOptions.from');
   assertOptionalAddressListField(options.to, 'to');

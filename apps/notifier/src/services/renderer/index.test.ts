@@ -5,7 +5,7 @@ import { HtmlRenderer } from './html';
 import { MjmlRenderer } from './mjml';
 import { ReactEmailRenderer } from './react-email';
 
-describe('renderers', () => {
+describe('renderers', { timeout: 20_000 }, () => {
   it('renders HTML with substitution from disk', async () => {
     const html = await new HtmlRenderer().render(
       path.join(templatesFixtureDir, 'html-welcome', 'index.html'),

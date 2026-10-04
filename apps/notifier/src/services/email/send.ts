@@ -169,6 +169,18 @@ function validateSendMailOptions(options: MergedSendMailOptions): void {
   }
 }
 
+function hasAddressList(
+  value: string | string[] | undefined,
+): value is string | string[] {
+  if (value === undefined) {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+  return value.trim().length > 0;
+}
+
 function toCommonEmailOptions(
   sendMailOptions: MergedSendMailOptions & {
     from: string;
@@ -182,8 +194,8 @@ function toCommonEmailOptions(
     to: sendMailOptions.to,
     subject: sendMailOptions.subject,
     html,
-    ...(sendMailOptions.cc && { cc: sendMailOptions.cc }),
-    ...(sendMailOptions.bcc && { bcc: sendMailOptions.bcc }),
+    ...(hasAddressList(sendMailOptions.cc) && { cc: sendMailOptions.cc }),
+    ...(hasAddressList(sendMailOptions.bcc) && { bcc: sendMailOptions.bcc }),
     ...(sendMailOptions.replyTo && { replyTo: sendMailOptions.replyTo }),
     ...(sendMailOptions.attachments && {
       attachments: sendMailOptions.attachments as EmailOptions['attachments'],

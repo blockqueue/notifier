@@ -58,6 +58,16 @@ describe('validateEmailRequestFields', () => {
     );
   });
 
+  it('removes empty cc/bcc arrays before validation', () => {
+    const withCc = body({ cc: [], to: 'a@example.com' });
+    const withBcc = body({ bcc: [], to: 'a@example.com' });
+
+    expect(() => validateEmailRequestFields(withCc)).not.toThrow();
+    expect(() => validateEmailRequestFields(withBcc)).not.toThrow();
+    expect(withCc.sendMailOptions?.cc).toBeUndefined();
+    expect(withBcc.sendMailOptions?.bcc).toBeUndefined();
+  });
+
   it('rejects sendMailOptions that are not an object', () => {
     expect(() =>
       validateEmailRequestFields({
