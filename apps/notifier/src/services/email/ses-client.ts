@@ -17,15 +17,14 @@ export class SesEmailClient extends EmailClient<SesAccountConfig> {
 
     const accessKeyId = config.accessKeyId?.trim();
     const secretAccessKey = config.secretAccessKey?.trim();
-    const hasExplicitKeys = Boolean(accessKeyId && secretAccessKey);
 
     const client = new SESClient({
       region: config.region,
-      ...(hasExplicitKeys
+      ...(accessKeyId && secretAccessKey
         ? {
             credentials: {
-              accessKeyId: accessKeyId as string,
-              secretAccessKey: secretAccessKey as string,
+              accessKeyId,
+              secretAccessKey,
             },
           }
         : {}),
