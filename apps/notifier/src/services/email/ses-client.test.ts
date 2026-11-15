@@ -97,4 +97,28 @@ describe('SesEmailClient', () => {
     await client.close();
     expect(destroy).toHaveBeenCalledTimes(1);
   });
+
+  it('allows region-only config for the default credential chain', () => {
+    expect(() =>
+      SesEmailClient.validateCredentials({
+        type: 'ses',
+        region: 'eu-west-2',
+      }),
+    ).not.toThrow();
+    const client = new SesEmailClient({
+      type: 'ses',
+      region: 'eu-west-2',
+    });
+    expect(client).toBeInstanceOf(SesEmailClient);
+  });
+
+  it('rejects half-configured static keys', () => {
+    expect(() =>
+      SesEmailClient.validateCredentials({
+        type: 'ses',
+        region: 'eu-west-2',
+        accessKeyId: 'id',
+      }),
+    ).toThrow(/both accessKeyId and secretAccessKey/);
+  });
 });

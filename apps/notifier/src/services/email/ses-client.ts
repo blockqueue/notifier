@@ -15,37 +15,40 @@ export class SesEmailClient extends EmailClient<SesAccountConfig> {
   constructor(config: SesAccountConfig) {
     super(config);
 
+    const accessKeyId = config.accessKeyId?.trim();
+    const secretAccessKey = config.secretAccessKey?.trim();
+    const hasExplicitKeys = Boolean(accessKeyId && secretAccessKey);
+
     const client = new SESClient({
       region: config.region,
-      credentials: {
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey,
-      },
+      ...(hasExplicitKeys
+        ? {
+            credentials: {
+              accessKeyId: accessKeyId as string,
+              secretAccessKey: secretAccessKey as string,
+            },
+          }
+        : {}),
     });
 
     this.client = addProxyToClient(client, { throwOnNoProxy: false });
   }
 
   static validateCredentials(config: SesAccountConfig): void {
-    const accessKeyId = config.accessKeyId;
-    if (
-      !accessKeyId ||
-      typeof accessKeyId !== 'string' ||
-      accessKeyId.trim().length === 0
-    ) {
-      throw new Error('Ses account is missing required field: accessKeyId');
-    }
-    const secretAccessKey = config.secretAccessKey;
-    if (
-      !secretAccessKey ||
-      typeof secretAccessKey !== 'string' ||
-      secretAccessKey.trim().length === 0
-    ) {
-      throw new Error('Ses account is missing required field: secretAccessKey');
-    }
     const region = config.region;
     if (!region || typeof region !== 'string' || region.trim().length === 0) {
       throw new Error('Ses account is missing required field: region');
+    }
+
+    const accessKeyId = config.accessKeyId?.trim() ?? '';
+    const secretAccessKey = config.secretAccessKey?.trim() ?? '';
+    const hasAccessKey = accessKeyId.length > 0;
+    const hasSecretKey = secretAccessKey.length > 0;
+
+    if (hasAccessKey !== hasSecretKey) {
+      throw new Error(
+        'Ses account requires both accessKeyId and secretAccessKey, or neither (default AWS credential chain)',
+      );
     }
   }
 

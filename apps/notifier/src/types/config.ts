@@ -17,8 +17,9 @@ export interface SesAccountConfig {
   type: 'ses';
   from?: string;
   region: string;
-  accessKeyId: string;
-  secretAccessKey: string;
+  /** When omitted (with secretAccessKey), the AWS default credential chain is used. */
+  accessKeyId?: string;
+  secretAccessKey?: string;
 }
 
 export interface ZeptomailAccountConfig {

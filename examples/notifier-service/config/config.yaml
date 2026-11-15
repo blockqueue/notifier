@@ -15,8 +15,10 @@ email:
       type: ses
       from: ${MAIL_FROM_EMAIL}
       region: ${AWS_REGION}
-      accessKeyId: ${AWS_ACCESS_KEY_ID}
-      secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+      # Optional static keys — omit both to use the default AWS credential chain
+      # (e.g. AWS_SHARED_CREDENTIALS_FILE from Roles Anywhere on the host).
+      # accessKeyId: ${AWS_ACCESS_KEY_ID}
+      # secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
 
   defaults:
     account: zeptomail
